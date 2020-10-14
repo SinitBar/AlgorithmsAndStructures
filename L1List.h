@@ -6,12 +6,14 @@ class element
 {
 	element* next;
 	string data;
-public:
-	element();
-	element* get_next();
-	string get_data();
 	void set_next(element*);
 	void set_data(string);
+	
+public:
+	element();
+	friend class L1List;
+	element* get_next();
+	string get_data();
 	~element();
 };
 
@@ -20,16 +22,16 @@ class L1List
 	element* head = nullptr;
 	element* cur = nullptr;
 	element* tail = nullptr;
-public:
-	L1List();
 	void set_head(element*);
 	void set_cur(element*);
 	void set_tail(element*);
+	void set_next(element*); // change next regarding to cur 
+	void set_data(string); // chage cur data
+public:
+	L1List();
 	element* get_head();
 	element* get_cur();
 	element* get_tail();
-	void set_next(element*); // change next regarding to cur 
-	void set_data(string); // chage cur data
 	string get_data(); // get cur data
 	element* get_next(); // get next regarding to cur
 	bool isEmpty(); // check for empty list
