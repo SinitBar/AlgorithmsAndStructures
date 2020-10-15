@@ -20,20 +20,17 @@ public:
 class L1List
 {
 	element* head = nullptr;
-	element* cur = nullptr;
 	element* tail = nullptr;
 	void set_head(element*);
-	void set_cur(element*);
 	void set_tail(element*);
-	void set_next(element*); // change next regarding to cur 
-	void set_data(string); // chage cur data
+	void set_next(element*, element*); // change next regarding to cur 
+	void set_data(element*, string); // chage cur data
 public:
 	L1List();
 	element* get_head();
-	element* get_cur();
 	element* get_tail();
-	string get_data(); // get cur data
-	element* get_next(); // get next regarding to cur
+	string get_data(element*); // get cur data
+	element* get_next(element*); // get next regarding to cur
 	bool isEmpty(); // check for empty list
 	void push_back(string); // adding to the end of the list
 	void push_front(string); // adding to the begining of the list
@@ -48,4 +45,5 @@ public:
 	void set(size_t, string); // change data of element on index
 	void push_front(L1List*); // insertion another list into begining of the data-list
 	~L1List();
+
 };
