@@ -15,19 +15,16 @@ element::~element() { }
 L1List::L1List()
 {
 	head = nullptr;
-	cur = nullptr;
 	tail = nullptr;
 }
 element* L1List::get_head() { return head; }
-element* L1List::get_cur() { return cur; }
 element* L1List::get_tail() { return tail; }
 void L1List::set_head(element* head_element) { head = head_element; }
-void L1List::set_cur(element* current) { cur = current; }
 void L1List::set_tail(element* tail_element) { tail = tail_element; }
-void L1List::set_next(element* next_element) { cur->set_next(next_element); }
-void L1List::set_data(string data) { cur->set_data(data); }
-element* L1List::get_next() { return (cur->get_next()); }
-string L1List::get_data() { return (cur->get_data()); }
+void L1List::set_next(element* now_element, element* next_element) { now_element->set_next(next_element); }
+void L1List::set_data(element* now_element, string data) { now_element->set_data(data); }
+element* L1List::get_next(element* now_element) { return (now_element->get_next()); }
+string L1List::get_data(element* now_element) { return (now_element->get_data()); }
 
 bool L1List::isEmpty()
 {
@@ -41,12 +38,11 @@ void L1List::push_back(string data)
 	element* new_element = new element;
 	new_element->set_data(data);
 	if (isEmpty())
-		head = cur = tail = new_element;
+		head = tail = new_element;
 	else
 	{
 		tail->set_next(new_element);
 		tail = tail->get_next();
-		cur = tail;
 	}
 }
 
@@ -55,35 +51,35 @@ void L1List::push_front(string data)
 	element* new_element = new element;
 	new_element->set_data(data);
 	if (isEmpty())
-		head = cur = tail = new_element;
+		head = tail = new_element;
 	else
 	{
-		cur = new_element; // cur = new elem
-		cur->set_next(head); // cur->next = head
-		head = cur; // head = cur
+		element* current = new_element; // cur = new elem
+		current->set_next(head); // cur->next = head
+		head = current; // head = cur
 	}
 }
 
 void L1List::pop_back()
 {
+	element* current = get_head();
 	if (!isEmpty())
 	{
-		set_cur(get_head()); // cur = head
-		if (get_next() == nullptr) // delete head
+		if (get_next(current) == nullptr) // delete head
 		{
 			element* element_to_delete = head;
-			cur = head = tail = nullptr;
+			current = head = tail = nullptr;
 			delete element_to_delete;
 		}
 		else
 		{
-			while (get_next()->get_next() != nullptr) // while cur->next->next exists
+			while (get_next(current)->get_next() != nullptr) // while cur->next->next exists
 			{
-				set_cur(get_next()); // cur = cur->next
+				current = get_next(current); // cur = cur->next
 			} // cur = the element before the last existing element
-			element* element_to_delete = get_next();
-			cur->set_next(nullptr);
-			tail = cur;
+			element* element_to_delete = get_next(current);
+			current->set_next(nullptr);
+			tail = current;
 			delete element_to_delete;
 		}
 	}
@@ -93,20 +89,20 @@ void L1List::pop_back()
 
 void L1List::pop_front()
 {
+	element* current = get_head();
 	if (!isEmpty())
 	{
-		cur = head;
-		if (get_next() == nullptr) // delete head
+		if (get_next(current) == nullptr) // delete head
 		{
 			element* element_to_delete = head;
-			head = cur = tail = nullptr;
+			head = current = tail = nullptr;
 			delete element_to_delete;
 		}
 		else
 		{
 			element* element_to_delete = head;
-			set_cur(head->get_next());// cur = head->next
-			set_head(cur); // head = cur
+			current = head->get_next();// cur = head->next
+			set_head(current); // head = cur
 			delete element_to_delete;
 		}
 	}
@@ -116,13 +112,13 @@ void L1List::pop_front()
 size_t L1List::get_size()
 {
 	size_t List_size = 0;
+	element* current = get_head();
 	if (!isEmpty())
 	{
 		List_size = 1;
-		set_cur(get_head()); // now = head
-		while (get_next() != nullptr) // while cur->next exists
+		while (get_next(current) != nullptr) // while cur->next exists
 		{
-			set_cur(get_next()); // cur = cur->next
+			current = get_next(current); // cur = cur->next
 			List_size++;
 		} // cur = last existing element
 	}
@@ -138,17 +134,16 @@ void L1List::insert(string data, size_t index) // first index = 0
 		throw out_of_range("Invalid index");
 	else
 	{
-		set_cur(get_head()); // now = head
+		element* current = get_head(); // now = head
 		while (index > 1)
 		{
 			index--;
-			set_cur(get_next()); // cur = cur->next
+			current = get_next(current); // cur = cur->next
 		} // cur is the element before the future new element
 		element* new_element = new element;
 		new_element->set_data(data);
-		new_element->set_next(get_next()); //e->next = cur->next
-		set_next(new_element); // cur->next = e
-		set_cur(new_element);
+		new_element->set_next(get_next(current)); //e->next = cur->next
+		set_next(current, new_element); // cur->next = e
 	}
 }
 
@@ -160,13 +155,13 @@ element* L1List::at(size_t index) // first index = 0
 		return head;
 	else
 	{
-		cur = head;
+		element* current = head;
 		while (index > 0)
 		{
 			index--;
-			set_cur(get_next()); // cur = cur->next
+			current = get_next(current); // cur = cur->next
 		} // cur is the element with data index
-		return cur;
+		return current;
 	}
 }
 
@@ -180,46 +175,46 @@ void L1List::remove(size_t index)
 		pop_back();
 	else
 	{
-		cur = head;
+		element* current = head;
 		while (index > 1)
 		{
 			index--;
-			set_cur(get_next()); // cur = cur->next
+			current = get_next(current); // cur = cur->next
 		} // cur is the element before the deleting element
 		element* element_to_delete = new element;
-		element_to_delete = get_next();
-		set_next(element_to_delete->get_next()); //cur->next = cur->next->next
+		element_to_delete = get_next(current);
+		set_next(current, element_to_delete->get_next()); //cur->next = cur->next->next
 		if (element_to_delete == nullptr)
-			tail = cur;
+			tail = current;
 		delete element_to_delete;
 	}
 }
 
 void L1List::print_to_console()
 {
-	set_cur(get_head()); // now = head
-	while (get_next() != nullptr)
+	element* current = get_head(); // now = head
+	while (get_next(current) != nullptr)
 	{
-		cout << get_data() << endl;
-		set_cur(get_next()); // cur = cur->next
+		cout << get_data(current) << endl;
+		current = get_next(current); // cur = cur->next
 	}
-	cout << get_data() << endl;
+	cout << get_data(current) << endl;
 }
 
 void L1List::clear()
 {
 	if (!isEmpty())
 	{
-		set_cur(get_head()); // cur = head
-		while (get_next() != nullptr) // while next exists
+		element* current = get_head(); // cur = head
+		while (get_next(current) != nullptr) // while next exists
 		{
-			set_cur(get_next()); // cur = cur->next
+			current = get_next(current); // cur = cur->next
 			delete get_head();
-			set_head(get_cur()); // head = cur
+			set_head(current); // head = cur
 
 		} //cur - the last in the list
 		element* element_to_delete = get_head();
-		head = cur = tail = nullptr;
+		head = current = tail = nullptr;
 		delete element_to_delete;
 	}
 	else
@@ -236,13 +231,13 @@ void L1List::set(size_t index, string data) // change data on index element
 		tail->set_data(data);
 	else
 	{
-		set_cur(get_head()); // now = head
+		element* current = get_head(); // now = head
 		while (index > 0)
 		{
 			index--;
-			set_cur(get_next()); // cur = cur->next
+			current = get_next(current); // cur = cur->next
 		} // cur is the element with data index
-		cur->set_data(data);
+		current->set_data(data); 
 	}
 }
 
@@ -252,12 +247,12 @@ void L1List::push_front(L1List* L) // insertion another list into the begining o
 	{
 		push_front(L->get_head()->get_data()); // first in this is the same as the first in L now
 		element* head_element = head; // now head is a new element because that's how my push_front works
-		L->set_cur(L->get_head());
-		while (L->get_next() != nullptr) // while cur->next exists
+		element* L_cur = L->get_head();
+		while (L->get_next(L_cur) != nullptr) // while cur->next exists
 		{
-			L->set_cur(L->get_next());
-			insert(L->get_cur()->get_data(), 1);
-			head = cur; // head is an inserted element - this is made for next iteration
+			L_cur = L->get_next(L_cur);
+			insert(L_cur->get_data(), 1);
+			head = head->get_next(); // head is an inserted element - this is made for next iteration
 		}
 		set_head(head_element);
 	}
