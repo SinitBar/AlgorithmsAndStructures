@@ -43,7 +43,8 @@ namespace UnitTestForOneWayLinkedList
 			L1List List;
 			List.push_back("bla");
 			List.push_back("car");
-			Assert::AreEqual(List.get_data(), (string)"car");
+			
+			Assert::AreEqual(List.get_data(List.get_tail()), (string)"car");
 		}
 		TEST_METHOD(PopBackFromEmptyList)
 		{
@@ -71,14 +72,14 @@ namespace UnitTestForOneWayLinkedList
 			List.push_back("hello");
 			List.push_back("bro");
 			List.pop_back();
-			Assert::AreEqual(List.get_data(), (string)"hello");
+			Assert::AreEqual(List.get_data(List.at(1)), (string)"hello");
 		}
 		TEST_METHOD(PushFrontInEmptyList)
 		{
 			L1List List;
 			List.push_front("hey");
-			Assert::AreEqual(List.get_data(), (string)"hey");
-			Assert::AreEqual(List.get_next() == nullptr, true);
+			Assert::AreEqual(List.get_data(List.at(0)), (string)"hey");
+			Assert::AreEqual(List.get_next(List.get_tail()) == nullptr, true);
 			Assert::AreEqual(List.get_head() == List.get_tail(), true);
 		}
 		TEST_METHOD(PushFrontInNotEmptyList)
@@ -87,7 +88,7 @@ namespace UnitTestForOneWayLinkedList
 			List.push_front("a good day");
 			List.push_front("i wish you");
 			List.push_front("hey"); 
-			Assert::AreEqual(List.get_data(), (string)"hey");
+			Assert::AreEqual(List.get_data(List.get_head()), (string)"hey");
 		}
 		TEST_METHOD(PopFrontFromEmptyList)
 		{
@@ -108,7 +109,7 @@ namespace UnitTestForOneWayLinkedList
 			List.push_front("i wish you");
 			List.push_front("hey");
 			List.pop_front();
-			Assert::AreEqual(List.get_data(), (string)"i wish you");
+			Assert::AreEqual(List.get_data(List.at(0)), (string)"i wish you");
 		}
 		TEST_METHOD(PopFrontFromOneElementList)
 		{
@@ -324,7 +325,6 @@ namespace UnitTestForOneWayLinkedList
 			Assert::AreEqual(List.isEmpty(), true);
 			Assert::AreEqual(List.get_head() == nullptr, true);
 			Assert::AreEqual(List.get_tail() == nullptr, true);
-			Assert::AreEqual(List.get_cur() == nullptr, true);
 			Assert::AreEqual(List.get_size(), (size_t)0);
 		}
 		TEST_METHOD(PushFrontAList)
